@@ -1,4 +1,4 @@
-"""
+v"""
 extract.py
 Uses Google Gemini (FREE tier, no credit card needed) to pull structured
 experimental parameters (compound, concentration, target, assay method,
@@ -7,10 +7,15 @@ key finding) out of a paper abstract.
 Requires: pip install google-generativeai
 Requires: a GEMINI_API_KEY environment variable set to your own free API key
           (get one at https://aistudio.google.com/apikey - no payment needed)
+
+NOTE: The free tier of Gemini has a limit on requests-per-minute. When
+processing multiple papers in a row, this module automatically waits and
+retries if that limit is hit, instead of failing silently.
 """
 
 import os
 import json
+import time
 import google.generativeai as genai
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -36,32 +41,47 @@ Title: {title}
 Abstract: {abstract}
 """
 
+RATE_LIMIT_MARKERS = ["429", "rate limit", "resource_exhausted", "quota"]
 
-def extract_from_abstract(title: str, abstract: str, model: str = None):
+
+def extract_from_abstract(title: str, abstract: str, model: str = None, max_retries: int = 4):
     prompt = EXTRACTION_PROMPT.format(title=title, abstract=abstract)
     raw_text = ""
 
-    try:
-        response = model_client.generate_content(prompt)
-        raw_text = response.text.strip()
+    for attempt in range(max_retries):
+        try:
+            response = model_client.generate_content(prompt)
+            raw_text = response.text.strip()
 
-        if raw_text.startswith("```"):
-            raw_text = raw_text.strip("`")
-            if raw_text.startswith("json"):
-                raw_text = raw_text[4:]
+            if raw_text.startswith("```"):
+                raw_text = raw_text.strip("`")
+                if raw_text.startswith("json"):
+                    raw_text = raw_text[4:]
 
-        parsed = json.loads(raw_text.strip())
-        return parsed
+            parsed = json.loads(raw_text.strip())
+            return parsed
 
-    except json.JSONDecodeError:
-        return {"error": "Could not parse LLM output as JSON", "raw": raw_text}
-    except Exception as e:
-        return {"error": str(e)}
+        except json.JSONDecodeError:
+            return {"error": "Could not parse LLM output as JSON", "raw": raw_text}
+
+        except Exception as e:
+            error_text = str(e).lower()
+            is_rate_limit = any(marker in error_text for marker in RATE_LIMIT_MARKERS)
+
+            if is_rate_limit and attempt < max_retries - 1:
+                wait = 8 * (attempt + 1)
+                print(f"[extract] Rate limited, waiting {wait}s before retry...")
+                time.sleep(wait)
+                continue
+            else:
+                return {"error": str(e)}
+
+    return {"error": "Failed after multiple retries (rate limited)"}
 
 
 def extract_from_papers(papers: list, model: str = None):
     results = []
-    for paper in papers:
+    for i, paper in enumerate(papers):
         extracted = extract_from_abstract(paper["title"], paper["abstract"])
         combined = {
             "title": paper["title"],
@@ -71,6 +91,10 @@ def extract_from_papers(papers: list, model: str = None):
             **extracted
         }
         results.append(combined)
+
+        if i < len(papers) - 1:
+            time.sleep(2)
+
     return results
 
 
