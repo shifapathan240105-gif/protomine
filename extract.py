@@ -1,4 +1,4 @@
-v"""
+"""
 extract.py
 Uses Google Gemini (FREE tier, no credit card needed) to pull structured
 experimental parameters (compound, concentration, target, assay method,
