@@ -75,7 +75,8 @@ if run_button and query.strip():
                 st.write(f"**Authors:** {r.get('authors', 'N/A')}")
                 st.write(f"**Key finding:** {r.get('key_finding', 'N/A')}")
                 if r.get("url"):
-                    st.markdown(f"[View paper]({r['url']})")
+                    st.markdown(f"[View paper]({r['url']})")        if r.get("error"):
+            st.error(f"Extraction error: {r['error']}")
 
         st.download_button(
             "Download results as CSV",
