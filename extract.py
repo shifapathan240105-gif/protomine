@@ -19,7 +19,7 @@ import time
 import google.generativeai as genai
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-model_client = genai.GenerativeModel("gemini-3.6-flash")
+model_client = genai.GenerativeModel("gemini-2.5-flash")
 
 EXTRACTION_PROMPT = """You are a research-methodology extraction assistant for bioscience/pharmacology papers.
 
