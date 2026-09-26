@@ -71,12 +71,13 @@ if run_button and query.strip():
 
         st.subheader("Source Papers")
         for r in results:
-            with st.expander(f"{r.get('title', 'Untitled')} ({r.get('year', 'N/A')})"):
-                st.write(f"**Authors:** {r.get('authors', 'N/A')}")
-                st.write(f"**Key finding:** {r.get('key_finding', 'N/A')}")
-                if r.get("url"):
-                    st.markdown(f"[View paper]({r['url']})")        if r.get("error"):
-            st.error(f"Extraction error: {r['error']}")
+                    with st.expander(f"{r.get('title', 'Untitled')} ({r.get('year', 'N/A')})"):
+            if r.get("error"):
+                st.error(f"Extraction error: {r['error']}")
+            st.write(f"**Authors:** {r.get('authors', 'N/A')}")
+            st.write(f"**Key finding:** {r.get('key_finding', 'N/A')}")
+            if r.get("url"):
+                st.markdown(f"[View paper]({r['url']})")
 
         st.download_button(
             "Download results as CSV",
