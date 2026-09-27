@@ -73,7 +73,7 @@ if run_button and query.strip():
         for r in results:
             with st.expander(f"{r.get('title', 'Untitled')} ({r.get('year', 'N/A')})"):
                 if r.get("error"):
-                    st.error(f"Extraction error: {r['error']}")
+                    st.info("⚠️ Detailed extraction unavailable for this paper (API rate limit) — showing available metadata.")
                 st.write(f"**Authors:** {r.get('authors', 'N/A')}")
                 st.write(f"**Key finding:** {r.get('key_finding', 'N/A')}")
                 if r.get("url"):
