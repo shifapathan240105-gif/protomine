@@ -25,10 +25,12 @@ with st.sidebar:
     st.header("Settings")
     num_papers = st.slider("Number of papers to analyze", min_value=3, max_value=12, value=6)
     st.markdown("---")
-    st.markdown(
-        "**Note:** This tool requires a `GEMINI_API_KEY` environment variable "
-        "to be set before running, and an internet connection to reach PubMed."
-    )
+   st.markdown(
+    "**How it works:** ProtoMine searches PubMed for relevant papers, then uses "
+    "Google's Gemini AI to automatically extract experimental parameters — "
+    "compounds, concentrations, methods, and key findings — from each abstract."
+) 
+        
 
 query = st.text_input(
     "Research question",
