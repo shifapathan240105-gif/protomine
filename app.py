@@ -13,6 +13,7 @@ from extract import extract_from_papers
 st.set_page_config(page_title="ProtoMine", layout="wide")
 
 st.title("🌿ProtoMine")
+st.markdown("##### Turn hours of paper-reading into seconds.")
 st.caption(
     "An automated literature-mining tool for evidence-based experimental protocol design. "
     "Type a research question about a compound, target, or assay. This tool searches "
