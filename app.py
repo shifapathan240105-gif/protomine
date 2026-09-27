@@ -12,7 +12,7 @@ from extract import extract_from_papers
 
 st.set_page_config(page_title="ProtoMine", layout="wide")
 
-st.title("🌿ProtoMine")
+st.title("🌿 ProtoMine")
 st.markdown("##### Turn hours of paper-reading into seconds.")
 st.caption(
     "An automated literature-mining tool for evidence-based experimental protocol design. "
@@ -25,12 +25,11 @@ with st.sidebar:
     st.header("Settings")
     num_papers = st.slider("Number of papers to analyze", min_value=3, max_value=12, value=6)
     st.markdown("---")
-   st.markdown(
-    "**How it works:** ProtoMine searches PubMed for relevant papers, then uses "
-    "Google's Gemini AI to automatically extract experimental parameters — "
-    "compounds, concentrations, methods, and key findings — from each abstract."
-) 
-        
+    st.markdown(
+        "**How it works:** ProtoMine searches PubMed for relevant papers, then uses "
+        "Google's Gemini AI to automatically extract experimental parameters - "
+        "compounds, concentrations, methods, and key findings - from each abstract."
+    )
 
 query = st.text_input(
     "Research question",
